@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atwzs.mes.dao.CarbonEmissionDao">
+
+    <resultMap type="com.atwzs.mes.entity.CarbonEmission" id="CarbonEmissionMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="energyConsumption" column="energy_consumption" jdbcType="VARCHAR"/>
+        <result property="projectType" column="project_type" jdbcType="VARCHAR"/>
+        <result property="timeType" column="time_type" jdbcType="VARCHAR"/>
+        <result property="energyConsumptionNum" column="energy_consumption_num" jdbcType="INTEGER"/>
+        <result property="warningValue" column="warning_value" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CarbonEmissionMap">
+        select id,energy_consumption,project_type,time_type,energy_consumption_num,warning_value
+        from t_carbon_emission
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CarbonEmissionMap">
+        select
+        id,energy_consumption,project_type,time_type,energy_consumption_num,warning_value
+        from t_carbon_emission
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="energyConsumption != null and energyConsumption != ''">
+                and energy_consumption = #{energyConsumption}
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and project_type = #{projectType}
+            </if>
+            <if test="timeType != null and timeType != ''">
+                and time_type = #{timeType}
+            </if>
+            <if test="energyConsumptionNum != null">
+                and energy_consumption_num = #{energyConsumptionNum}
+            </if>
+            <if test="warningValue != null">
+                and warning_value = #{warningValue}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from t_carbon_emission
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="energyConsumption != null and energyConsumption != ''">
+                and energy_consumption = #{energyConsumption}
+            </if>
+            <if test="projectType != null and projectType != ''">
+                and project_type = #{projectType}
+            </if>
+            <if test="timeType != null and timeType != ''">
+                and time_type = #{timeType}
+            </if>
+            <if test="energyConsumptionNum != null">
+                and energy_consumption_num = #{energyConsumptionNum}
+            </if>
+            <if test="warningValue != null">
+                and warning_value = #{warningValue}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryList" resultMap="CarbonEmissionMap">
+        select *
+        from t_carbon_emission
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_carbon_emission(energy_consumption, project_type, time_type, energy_consumption_num, warning_value)
+        values (#{energyConsumption}, #{projectType}, #{timeType}, #{energyConsumptionNum}, #{warningValue})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_carbon_emission(energy_consumption, project_type, time_type, energy_consumption_num, warning_value)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.energyConsumption}, #{entity.projectType}, #{entity.timeType}, #{entity.energyConsumptionNum}, #{entity.warningValue})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_carbon_emission(energy_consumption, project_type, time_type, energy_consumption_num, warning_value)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.energyConsumption}, #{entity.projectType}, #{entity.timeType}, #{entity.energyConsumptionNum}, #{entity.warningValue})
+        </foreach>
+        on duplicate key update
+        energy_consumption = values(energy_consumption),
+        project_type = values(project_type),
+        time_type = values(time_type),
+        energy_consumption_num = values(energy_consumption_num),
+        warning_value = values(warning_value)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_carbon_emission
+        <set>
+            <if test="energyConsumption != null and energyConsumption != ''">
+                energy_consumption = #{energyConsumption},
+            </if>
+            <if test="projectType != null and projectType != ''">
+                project_type = #{projectType},
+            </if>
+            <if test="timeType != null and timeType != ''">
+                time_type = #{timeType},
+            </if>
+            <if test="energyConsumptionNum != null">
+                energy_consumption_num = #{energyConsumptionNum},
+            </if>
+            <if test="warningValue != null">
+                warning_value = #{warningValue},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from t_carbon_emission
+        where id = #{id}
+    </delete>
+
+</mapper>
+
